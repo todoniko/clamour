@@ -4,23 +4,13 @@ open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Running
 open Clamour.Pcg
 
-module List =
-    let inline myLength xs =
-        let rec loop xs acc =
-            match xs with
-            | [] -> acc
-            | _ :: tail -> loop tail (acc + 1)
-
-        loop xs 0
-
 [<MemoryDiagnoser>]
 type RandomBench() =
-    let seed = 18446744073709551557UL
+    let seed = 0xFFFFFFFFFFFFFFC5UL // 2^64-59, largest 64bit prime
 
     let r = System.Random()
-    let stream = new Stream(seed, 1UL)
+    let stream = new Stream(seed)
     let mutable explicit_state = Oneseq.init seed
-
 
     [<Benchmark>]
     member _.Pcg_stream_xs_rr() = stream.next ()

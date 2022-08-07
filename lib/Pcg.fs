@@ -17,8 +17,13 @@ module Oneseq =
         state <- current * 0x5851F42D4C957F2DUL
         xsh_rr current
 
-type Stream(seed: uint64, stream: uint64) =
-    let inc = stream <<< 1 ||| 1UL // Must be odd
+[<Sealed>]
+type Stream(seed: uint64, ?stream: uint64) =
+    let inc =
+        match stream with
+        | Some s -> s <<< 1 ||| 1UL
+        | None -> 0x14057B7EF767814FUL // Must be odd
+
     let mutable state = (inc + seed) * 0x5851F42D4C957F2DUL + inc
 
     member _.next() =
