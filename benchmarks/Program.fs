@@ -3,6 +3,7 @@
 open BenchmarkDotNet.Attributes
 open BenchmarkDotNet.Running
 open Clamour.Pcg
+open Clamour.Sfc
 
 [<MemoryDiagnoser>]
 type RandomBench() =
@@ -12,6 +13,10 @@ type RandomBench() =
     let stream = new Stream(seed)
     let uniq = new Uniq(seed)
     let mutable explicit_state = Oneseq.init seed
+    let sfc32 = new Sfc32(seed)
+
+    [<Benchmark>]
+    member _.Sfc_32() = sfc32.next ()
 
     [<Benchmark>]
     member _.Pcg_stream_xs_rr() = stream.next ()
