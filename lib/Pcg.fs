@@ -9,7 +9,7 @@ module Permute =
         (xst >>> (int32) rot)
         ||| (xst <<< ((-(int32) rot) &&& 31))
 
-    let rxs_m_xs (state: uint64) : uint64 =
+    let inline rxs_m_xs (state: uint64) : uint64 =
         let shift = int (state >>> 59) + 5 in
 
         let word =
