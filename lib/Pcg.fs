@@ -9,6 +9,15 @@ module Permute =
         (xst >>> (int32) rot)
         ||| (xst <<< ((-(int32) rot) &&& 31))
 
+    let rxs_m_xs (state: uint64) : uint64 =
+        let shift = int (state >>> 59) + 5 in
+
+        let word =
+            ((state >>> shift) ^^^ state)
+            * 0xAEF17502108EF2D9UL in
+
+        (word >>> 43) ^^^ word
+
 module Oneseq =
     let init seed = seed * 0x5851F42D4C957F2DUL
 
@@ -28,5 +37,19 @@ type Stream(seed: uint64, ?stream: uint64) =
 
     member _.next() =
         let pcg = xsh_rr state
+        state <- state * 0x5851F42D4C957F2DUL + inc
+        pcg
+
+[<Sealed>]
+type Uniq(seed: uint64, ?stream: uint64) =
+    let inc =
+        match stream with
+        | Some s -> s <<< 1 ||| 1UL
+        | None -> 0x14057B7EF767814FUL // Must be odd
+
+    let mutable state = (inc + seed) * 0x5851F42D4C957F2DUL + inc
+
+    member _.next() =
+        let pcg = rxs_m_xs state
         state <- state * 0x5851F42D4C957F2DUL + inc
         pcg
