@@ -40,6 +40,9 @@ type Stream(seed: uint64, ?stream: uint64) =
         state <- state * 0x5851F42D4C957F2DUL + inc
         pcg
 
+    member _.split() =
+        let stream = (inc >>> 1) + 1UL in new Stream(state, stream)
+
 [<Sealed>]
 type Uniq(seed: uint64, ?stream: uint64) =
     let inc =
