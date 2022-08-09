@@ -14,6 +14,10 @@ type RandomBench() =
     let uniq = new Uniq(seed)
     let mutable explicit_state = Oneseq.init seed
     let sfc32 = new Sfc32(seed)
+    let sfc64 = new Sfc64(seed)
+
+    [<Benchmark>]
+    member _.Sfc_64() = sfc64.next ()
 
     [<Benchmark>]
     member _.Sfc_32() = sfc32.next ()
